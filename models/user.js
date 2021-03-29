@@ -88,30 +88,26 @@ class User {
 
   static async messagesFrom(username) {
     const result = await db.query(`
-      SELECT m.id, body, sent_at, read_at, u.username, u.first_name, u.last_name, u.phone
+      SELECT m.id, body, sent_at, read_at, u.username, u.first_name, 
+      u.last_name, u.phone
       FROM messages AS m
       JOIN users AS u ON m.to_username = u.username
       WHERE from_username = $1
     `, [username]);
 
-    let data = result.rows[0];
-
-    let toUser = {username: data.username, first_name: data.first_name, last_name: data.last_name, phone: data.phone};
-
-
     console.log("bat", result.rows)
-    // return result.rows.map(m => ({
-    //   id: messages.id,
-    //   to_user: {
-    //     username: messages.to_username,
-    //     first_name: messages.first_name,
-    //     last_name: messages.last_name,
-    //     phone: messages.phone,
-    //   },
-    //   body: messages.body,
-    //   sent_at: messages.sent_at,
-    //   read_at: messages.read_at
-    // }));
+    return result.rows.map(r => ({
+      id: r.id,
+      to_user: {
+        username: r.username,
+        first_name: r.first_name,
+        last_name: r.last_name,
+        phone: r.phone,
+      },
+      body: r.body,
+      sent_at: r.sent_at,
+      read_at: r.read_at
+    }));
   }
 
   /** Return messages to this user.
@@ -124,22 +120,23 @@ class User {
 
   static async messagesTo(username) {
     const result = await db.query(`
-      SELECT id, from_username, body, sent_at, read_at 
-      FROM messages
-      JOIN users ON messages.from_username = users.username
-      WHERE to_username = $1
+    SELECT m.id, body, sent_at, read_at, u.username, u.first_name, 
+    u.last_name, u.phone
+    FROM messages AS m
+    JOIN users AS u ON m.from_username = u.username
+    WHERE to_username = $1
     `, [username]);
-    return result.rows.map(m => ({
-      id: messages.id,
-      to_user: {
-        username: messages.from_username,
-        first_name: messages.first_name,
-        last_name: messages.last_name,
-        phone: messages.phone,
+    return result.rows.map(r => ({
+      id: r.id,
+      from_user: {
+        username: r.username,
+        first_name: r.first_name,
+        last_name: r.last_name,
+        phone: r.phone,
       },
-      body: messages.body,
-      sent_at: messages.sent_at,
-      read_at: messages.read_at
+      body: r.body,
+      sent_at: r.sent_at,
+      read_at: r.read_at
     }));
   }
 }
