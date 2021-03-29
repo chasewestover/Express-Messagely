@@ -20,7 +20,7 @@ class User {
     const result = await db.query(`
       INSERT INTO users
       (username, password, first_name, last_name, phone, join_at)
-      VALUES ($1, $2, $3, $4, $5, LOCALTIMESTAMP)
+      VALUES ($1, $2, $3, $4, $5, CURRENT_TIMESTAMP)
       RETURNING username, password, first_name, last_name, phone
     `, [username, encryptPw, first_name, last_name, phone]);
     return result.rows[0];
@@ -41,7 +41,7 @@ class User {
 
   static async updateLoginTimestamp(username) {
     const result = await db.query(`
-      UPDATE users SET last_login_at = CURRENT_TIMESTAMP
+      UPDATE users SET last_login_at = LOCALTIMESTAMP
       WHERE username = $2
     `, [now, username]);
   }
