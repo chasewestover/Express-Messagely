@@ -2,7 +2,7 @@
 
 const Router = require("express").Router;
 const router = new Router();
-const {ensureUserConnMsg} = require("../middleware/auth.js")
+const { ensureUserConnMsg, ensureLoggedIn } = require("../middleware/auth.js")
 
 /** GET /:id - get detail of message.
  *
@@ -17,7 +17,7 @@ const {ensureUserConnMsg} = require("../middleware/auth.js")
  *
  **/
 
- router.get("/:id", ensureUserConnMsg , async function (req, res, next) {
+router.get("/:id", ensureUserConnMsg, async function (req, res, next) {
     return res.json({ message: res.locals.message });
 })
 
@@ -30,6 +30,7 @@ const {ensureUserConnMsg} = require("../middleware/auth.js")
  *
  **/
 
+router.post("/", ensureLoggedIn, async function (req, res, next))
 
 /** POST/:id/read - mark message as read:
  *
