@@ -16,6 +16,12 @@ const router = new Router();
  *
  **/
 
+ router.get("/:id", async function (req, res, next) {
+    let result = await Message.get(req.params.id);
+    return res.json({ message: result });
+})
+
+
 
 /** POST / - post message.
  *
