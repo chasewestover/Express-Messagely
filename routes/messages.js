@@ -2,6 +2,7 @@
 
 const Router = require("express").Router;
 const router = new Router();
+const {ensureUserConnMsg} = require("../middleware/auth.js")
 
 /** GET /:id - get detail of message.
  *
@@ -16,9 +17,8 @@ const router = new Router();
  *
  **/
 
- router.get("/:id", async function (req, res, next) {
-    let result = await Message.get(req.params.id);
-    return res.json({ message: result });
+ router.get("/:id", ensureUserConnMsg , async function (req, res, next) {
+    return res.json({ message: res.locals.message });
 })
 
 

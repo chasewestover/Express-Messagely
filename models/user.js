@@ -16,6 +16,7 @@ class User {
     //===============================
     //why jest -i
     //why is this an async operation?
+    console.log(password);
     const encryptPw = await bcrypt.hash(password, 12);
     const result = await db.query(`
       INSERT INTO users

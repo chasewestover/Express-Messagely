@@ -52,16 +52,16 @@ function ensureCorrectUser(req, res, next) {
 }
 
 
-function ensureMessageTo(req, res, next) {
-  try {
-    if (!res.locals.user ||
-        res.locals.user.username !== req.params.username) {
-      throw new UnauthorizedError();
-    } else {
-      return next();
-    }
-  } catch (err) {
-    return next(err);
+function ensureUserConnMsg(req, res, next) {
+  //get the message details
+  const msg = Message.get(req.params.id);
+  res.locals.message = msg;
+  const usernames = [msg.from_username, msg.to_username];
+  if (!res.locals.user ||
+      ! usernames.includes(res.locals.user.username) ){
+    return next(new UnauthorizedError())
+  } else {
+    return next();
   }
 }
 
@@ -70,4 +70,5 @@ module.exports = {
   authenticateJWT,
   ensureLoggedIn,
   ensureCorrectUser,
+  ensureUserConnMsg
 };

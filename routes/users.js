@@ -3,6 +3,7 @@
 const Router = require("express").Router;
 const { ensureCorrectUser, ensureLoggedIn } = require("../middleware/auth.js")
 const router = new Router();
+const User = require('../models/user')
 
 
 /** GET / - get list of users.
@@ -14,7 +15,7 @@ const router = new Router();
 router.get("/", ensureLoggedIn, async function (req, res, next) {
     let result = await User.all();
     return res.json({ users: result });
-})
+});
 
 
 /** GET /:username - get detail of users.
