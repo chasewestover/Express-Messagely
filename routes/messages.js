@@ -2,7 +2,8 @@
 
 const Router = require("express").Router;
 const router = new Router();
-const { ensureUserConnMsg, ensureLoggedIn } = require("../middleware/auth.js")
+const { ensureUserConnMsg, ensureLoggedIn, ensureMsgToUser } = require("../middleware/auth.js");
+const Message = require('../models/message');
 
 /** GET /:id - get detail of message.
  *
@@ -30,7 +31,13 @@ router.get("/:id", ensureUserConnMsg, async function (req, res, next) {
  *
  **/
 
-// router.post("/", ensureLoggedIn, async function (req, res, next))
+router.post("/", ensureLoggedIn, async function (req, res, next) {
+    let { to_username, body } = req.body;
+    let from_username = res.locals.user.username
+    let message = await Message.create({ from_username, to_username, body });
+
+    return res.json({ message })
+})
 
 /** POST/:id/read - mark message as read:
  *
@@ -39,6 +46,19 @@ router.get("/:id", ensureUserConnMsg, async function (req, res, next) {
  * Makes sure that the only the intended recipient can mark as read.
  *
  **/
+
+router.post("/:id/read", ensureMsgToUser, async function (req, res, next) {
+    let msg = res.locals.message;
+    msg = await Message.markRead(msg.id);
+
+    let message = {
+        id: msg.id,
+        read_at: msg.read_at
+    }
+    return res.json({message})
+})
+
+
 
 
 module.exports = router;

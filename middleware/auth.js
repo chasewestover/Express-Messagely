@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
+const Message = require('../models/message');
 
 
 /** Middleware: Authenticate user. */
@@ -52,12 +53,26 @@ function ensureCorrectUser(req, res, next) {
 }
 
 
-function ensureUserConnMsg(req, res, next) {
-  const msg = Message.get(req.params.id);
+async function ensureUserConnMsg(req, res, next) {
+  const msg = await Message.get(req.params.id);
   res.locals.message = msg;
-  const usernames = [msg.from_username, msg.to_username];
+  const usernames = [msg.from_user.username, msg.to_user.username];
+  console.log("bat", usernames, res.locals.message)
   if (!res.locals.user ||
       ! usernames.includes(res.locals.user.username) ){
+    return next(new UnauthorizedError())
+  } else {
+    return next();
+  }
+}
+
+
+async function ensureMsgToUser(req, res, next) {
+  const msg = await Message.get(req.params.id);
+  res.locals.message = msg;
+  const username = msg.to_user.username;
+  if (!res.locals.user ||
+      username !== res.locals.user.username) {
     return next(new UnauthorizedError())
   } else {
     return next();
@@ -69,5 +84,6 @@ module.exports = {
   authenticateJWT,
   ensureLoggedIn,
   ensureCorrectUser,
-  ensureUserConnMsg
+  ensureUserConnMsg,
+  ensureMsgToUser
 };
