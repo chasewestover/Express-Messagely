@@ -27,7 +27,7 @@ class User {
     return result.rows[0];
   }
 
-  /** Authenticate: is username/password valid? Returns boolean. */
+  /** Authenticate: is username/password valid? Returns boolean. */~
 
   static async authenticate(username, password) {
     const result = await db.query(`

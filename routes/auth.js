@@ -5,7 +5,7 @@ const router = new Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const {SECRET_KEY} = require("../config");
-const {UnauthorizedError, BadRequestError} = require("../expressError");
+const {BadRequestError} = require("../expressError");
 
 /** POST /login: {username, password} => {token} */
 router.post("/login", async function (req, res, next) {
@@ -17,7 +17,7 @@ router.post("/login", async function (req, res, next) {
     } else {
         throw new BadRequestError("Invalid user/password");
     }
-})
+});
 
 
 /** POST /register: registers, logs in, and returns token.
@@ -27,7 +27,7 @@ router.post("/login", async function (req, res, next) {
 
 router.post("/register", async function (req, res, next) {
     let { username, password, first_name, last_name, phone } = req.body;
-
+    console.log(process.env)
     try {
         await User.register({username, password, first_name, last_name, phone})
         
@@ -36,6 +36,6 @@ router.post("/register", async function (req, res, next) {
     } catch(e) {
         return next(e)
     }
-})
+});
 
 module.exports = router;
