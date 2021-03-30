@@ -15,8 +15,8 @@ class User {
   static async register({ username, password, first_name, last_name, phone }) {
     //===============================
     //why jest -i
+    //forces the tests to happen in sequence
     //why is this an async operation?
-    console.log(password);
     const encryptPw = await bcrypt.hash(password, 12);
     const result = await db.query(`
       INSERT INTO users
@@ -33,9 +33,11 @@ class User {
     const result = await db.query(`
       SELECT password FROM users WHERE username = $1
     `, [username]);
-    const encryptPw = result.rows[0].password;
-    const valid = await bcrypt.compare(password, encryptPw);
-    return valid;
+    if(result.rows.length === 1){
+      const encryptPw = result.rows[0].password;
+      const valid = await bcrypt.compare(password, encryptPw);
+      return valid;
+    }
   }
 
   /** Update last_login_at for user */
@@ -96,7 +98,6 @@ class User {
       WHERE from_username = $1
     `, [username]);
 
-    console.log("bat", result.rows)
     return result.rows.map(r => ({
       id: r.id,
       to_user: {
@@ -109,6 +110,7 @@ class User {
       sent_at: r.sent_at,
       read_at: r.read_at
     }));
+  
   }
 
   /** Return messages to this user.

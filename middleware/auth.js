@@ -53,7 +53,6 @@ function ensureCorrectUser(req, res, next) {
 
 
 function ensureUserConnMsg(req, res, next) {
-  //get the message details
   const msg = Message.get(req.params.id);
   res.locals.message = msg;
   const usernames = [msg.from_username, msg.to_username];

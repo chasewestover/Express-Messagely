@@ -30,7 +30,7 @@ router.get("/:id", ensureUserConnMsg, async function (req, res, next) {
  *
  **/
 
-router.post("/", ensureLoggedIn, async function (req, res, next))
+// router.post("/", ensureLoggedIn, async function (req, res, next))
 
 /** POST/:id/read - mark message as read:
  *

@@ -5,17 +5,17 @@ const router = new Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const {SECRET_KEY} = require("../config");
+const {UnauthorizedError, BadRequestError} = require("../expressError");
 
 /** POST /login: {username, password} => {token} */
 router.post("/login", async function (req, res, next) {
     let { username, password } = req.body;
-
     if (await User.authenticate(username, password)) {
         let token = jwt.sign({ username }, SECRET_KEY);
         User.updateLoginTimestamp(username);
         return res.json({ token });
     } else {
-        throw new UnauthorizedError("Invalid user/password");
+        throw new BadRequestError("Invalid user/password");
     }
 })
 

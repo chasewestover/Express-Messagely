@@ -29,8 +29,6 @@ router.get("/:username", ensureCorrectUser, async function (req, res, next) {
     return res.json({ user: result });
 })
 
-
-
 /** GET /:username/to - get messages to user
  *
  * => {messages: [{id,
